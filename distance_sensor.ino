@@ -18,12 +18,15 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 
 void setup() {
-  pinMode(2, OUTPUT);//define arduino pin for the trigger, or output signal
-  pinMode(4, INPUT);//define arduino pin for the echo, or input signal
+  pinMode(2, OUTPUT);//define arduino pin
+  pinMode(4, INPUT);//define arduino pin
   Serial.begin(9600);//enable serial monitor
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
+
+  pinMode(A0, OUTPUT);      // Set the analog pin A0 as a digital output
+  digitalWrite(A0, LOW);   // Set the A0 pin to LOW
 
 }
 void loop() {
@@ -34,19 +37,30 @@ void loop() {
   delayMicroseconds(10);
   digitalWrite(2, LOW);
   
-  long t = pulseIn(4, HIGH);//record input pulse time and save it as a variable
+  float t = pulseIn(4, HIGH);//input pulse and save it veriable
   
-  float inches = t / 74.0/ 2; //convert time into distance, in inches
+  float inches = t / 74 / 2; //time convert distance
+  float cm = t / 29 / 2; //time convert distance
   String inch = " inches t";
+  String CM = " cm";
 
   display.setTextSize(2);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
   display.println("Dist=");
-  display.print(inches);
-  display.println(" in");
+  display.print(inches,2);
+  display.println("in ");
   display.display();
+
+  if (inches < 2.0) {
+    digitalWrite(A0, HIGH);
+  }
+  else {
+    digitalWrite(A0, LOW);
+  }
 
   delay(100);//delay
   display.clearDisplay();
+
+
 }
